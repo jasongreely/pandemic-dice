@@ -7,7 +7,6 @@ import { PlayersComponent } from './players/players.component';
 import { TableComponent } from './table/table.component';
 import { DiceComponent } from './dice/dice.component';
 import { ScoreboardComponent } from './scoreboard/scoreboard.component';
-import { DieComponent } from './die/die.component';
 
 @NgModule({
   declarations: [
@@ -15,8 +14,7 @@ import { DieComponent } from './die/die.component';
     PlayersComponent,
     TableComponent,
     DiceComponent,
-    ScoreboardComponent,
-    DieComponent
+    ScoreboardComponent
   ],
   imports: [
     BrowserModule,

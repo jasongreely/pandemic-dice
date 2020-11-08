@@ -1,5 +1,5 @@
-<ul>
-    <li *ngFor="let die of dice">
-        <span>={{die.pips}}</span>
-    </li>
-</ul>
+<div class="dice">
+    <div *ngFor="let die of dice" class="face">
+        <span *ngFor="let item of [].constructor(die.pips); let i=index" class="pip"></span>
+    </div>
+</div>
