@@ -1,5 +1,19 @@
-<div class="dice">
-    <div *ngFor="let die of dice" class="face">
-        <span *ngFor="let item of [].constructor(die.pips); let i=index" class="pip"></span>
+<div class="dice-rollers">
+    <h2>Rollers</h2>
+    <div *ngFor="let die of dice" class="die" (click)="keep(die)">
+        <div class=face>
+            <span *ngFor="let item of [].constructor(die.pips); let i=index" class="pip"></span>
+        </div>
     </div>
+</div>
+<div class="dice-keepers">
+    <h2>Keepers</h2>
+    <div *ngFor="let keptDie of keptDice" class="die">
+        <div class=face>
+            <span *ngFor="let item of [].constructor(keptDie.pips); let i=index" class="pip"></span>
+        </div>
+    </div>
+</div>
+<div class="action-bar">
+    <span id="roll" (click)="rollDice()">Roll</span>
 </div>

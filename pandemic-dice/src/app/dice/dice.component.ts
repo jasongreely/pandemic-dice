@@ -8,26 +8,46 @@ import { Die } from "../die";
 })
 export class DiceComponent implements OnInit {
 
-  dice = [];
+  dice = []
+  keptDice = []
+  diceCount = 6
+
   constructor() { }
 
   ngOnInit() {
-    var dice_count=6;
-    for(var x = 0; x < dice_count; x++){
-      var die: Die = {
-        id: x,
-        pips: this.roll(),
-        keep: false
-      }
-      this.dice.push(die);
-    }
-
+    this.dice = this.rollDice();
   }
 
-  roll(){
+  rollDice(){
+    var dice = [];
+    for(var x = 0; x < this.diceCount; x++){
+      var die: Die = {
+        id: x,
+        pips: this.getRoll(),
+        keep: false
+      }
+      dice.push(die);
+    }
+    return dice;
+  }
+
+  getRoll(){
     var min = Math.ceil(1);
     var max = Math.floor(7);
     return Math.floor(Math.random() * (max - min) + min);
   }
 
+  keep(die: Die){
+    console.log("keep die {}, {} pips", die.id, die.pips);
+    die.keep = !die.keep;
+    if(die.keep){
+      this.keptDice.push(die);
+    } else {
+      for(var x = 0; x < this.keptDice.length; x++){
+        if(die.id == this.keptDice[x].id){
+          this.keptDice.splice(x, 1);
+        }
+      }
+    }
+  }
 }

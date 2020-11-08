@@ -1,3 +1,14 @@
+
+.die {
+    display: block;
+    float: left;
+}
+
+.action-bar, .dice-keepers {
+    display: block;
+    clear: both;
+}
+
 .face {
 	display: grid;
 	grid-template-areas:
