@@ -7,7 +7,7 @@
     </div>
 </div>
 <div class="dice-keepers">
-    <h2>Keepers</h2>
+    <h2>Keepers | {{ rollScore }}</h2>
     <div *ngFor="let keptDie of keptDice" class="die" (click)="keep(keptDie)">
         <div class=face>
             <span *ngFor="let item of [].constructor(keptDie.pips); let i=index" class="pip"></span>

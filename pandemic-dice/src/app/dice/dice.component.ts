@@ -10,6 +10,9 @@ export class DiceComponent implements OnInit {
 
   dice = []
   keptDice = []
+  scoredDice = []
+  score = 0
+  rollScore = 0
 
   constructor() { }
 
@@ -30,10 +33,17 @@ export class DiceComponent implements OnInit {
   }
 
   rollDice(){
-    for(var x = 0; x < this.dice.length; x++){
-      var die = this.dice[x];
+    //move kept dice to scored to prevent rescoring
+    for(var x = 0; x < this.keptDice.length; x++){
+      this.sortDie(this.keptDice[x], this.dice);
+      this.scoredDice.push(this.keptDice[x]);
+    }
+
+    //gen random ints for remaining dice
+    for(var y = 0; y < this.dice.length; y++){
+      var die = this.dice[y];
       die.pips = this.getRoll();
-      this.dice[x] = die;
+      this.dice[y] = die;
       console.log(die);
     }
   }
@@ -45,7 +55,6 @@ export class DiceComponent implements OnInit {
   }
 
   keep(die: Die){
-    console.log("keep die {}, {} pips", die.id, die.pips);
     die.keep = !die.keep;
     if(die.keep){
       this.dice = this.sortDie(die, this.dice);
@@ -54,8 +63,8 @@ export class DiceComponent implements OnInit {
     } else {
       this.keptDice = this.sortDie(die, this.keptDice);
       this.dice.push(die);
-      console.log(this.dice);
     }
+    this.scoreRoll(this.keptDice);
   }
 
   sortDie(die: Die, diceList){
@@ -65,5 +74,53 @@ export class DiceComponent implements OnInit {
       }
     }
     return diceList
+  }
+
+  scoreRoll(diceList){
+    var rollScore = 0;
+    for(var x = 0; x < diceList.length; x++){
+      console.log("Scoring die..", diceList[x].id, diceList[x].pips);
+      var multiples = this.checkMultiples(diceList[x], diceList);
+      console.log("Multiples", multiples);
+      if(multiples >= 3){
+        var factor = 0;
+        var processing = []
+        processing.push(diceList[x]);
+        for(var y = 0; y < diceList.length; y++){
+          if((diceList[x].id != diceList[y].id) && (diceList[x].pips == diceList[y].pips)){
+            processing.push(diceList[y]);
+          }
+        }
+        if(diceList[x].pips == 1){
+          factor = 1000;
+        } else {
+          factor = diceList[x].pips * 100;
+        }
+        rollScore = factor;
+
+        if (processing.length > 3) {
+          for(var z = 0; z < (processing.length - 3); z++){
+            rollScore += factor;
+          }
+        }
+      }
+      if(diceList[x].pips == 1 && multiples < 3){
+        rollScore += 100;
+      } else if(diceList[x].pips == 5 && multiples < 3){
+        rollScore += 50;
+      }
+    }
+    this.rollScore = rollScore;
+  }
+
+  checkMultiples(die: Die, diceList){
+    var matchCount = 1;
+    for(var x = 0; x < diceList.length; x++){
+      var checkDie = diceList[x];
+      if((die.id != checkDie.id) && (die.pips == checkDie.pips)){
+        matchCount++;
+      }
+    }
+    return matchCount;
   }
 }
