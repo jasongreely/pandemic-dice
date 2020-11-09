@@ -14,6 +14,15 @@
         </div>
     </div>
 </div>
+<div class="dice-kept">
+    <h2>Kept | {{ roundScore }}</h2>
+    <div *ngFor="let scoredDie of scoredDice" class="die">
+        <div class=face>
+            <span *ngFor="let item of [].constructor(scoredDie.pips); let i=index" class="pip"></span>
+        </div>
+    </div>
+</div>
 <div class="action-bar">
-    <span id="roll" (click)="rollDice()">Roll</span>
+    <span id="roll" (click)="rollDice()">Roll</span><br> 
+    <span id="stay">Stay with {{ rollScore + roundScore }} points</span>
 </div>

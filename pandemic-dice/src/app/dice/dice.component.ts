@@ -13,6 +13,7 @@ export class DiceComponent implements OnInit {
   scoredDice = []
   score = 0
   rollScore = 0
+  roundScore = 0
 
   constructor() { }
 
@@ -33,11 +34,18 @@ export class DiceComponent implements OnInit {
   }
 
   rollDice(){
+    this.roundScore += this.rollScore;
+    this.rollScore = 0;
+    
     //move kept dice to scored to prevent rescoring
-    for(var x = 0; x < this.keptDice.length; x++){
-      this.sortDie(this.keptDice[x], this.dice);
-      this.scoredDice.push(this.keptDice[x]);
+    if(this.keptDice.length > 0){
+      this.scoredDice = this.scoredDice.concat(this.keptDice);
+      this.keptDice = [];
     }
+
+    console.log("Kept dice: " + this.keptDice.length);
+    console.log("Dice to roll: " + this.dice.length);
+    console.log("Scored dice: " + this.scoredDice.length);
 
     //gen random ints for remaining dice
     for(var y = 0; y < this.dice.length; y++){
@@ -122,5 +130,16 @@ export class DiceComponent implements OnInit {
       }
     }
     return matchCount;
+  }
+
+  checkStraight(allPips){
+    var straight = [1,2,3,4,5,6];
+    allPips = allPips.sort(function(x,y){return x-y});
+    for(var z=0; z < straight.length; z++){
+      if(straight[z] != allPips[z]){
+        return false;
+      }
+    }
+    return true;
   }
 }
