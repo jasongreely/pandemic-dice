@@ -10,25 +10,32 @@ export class DiceComponent implements OnInit {
 
   dice = []
   keptDice = []
-  diceCount = 6
 
   constructor() { }
 
   ngOnInit() {
-    this.dice = this.rollDice();
-  }
-
-  rollDice(){
+    console.log("init");
     var dice = [];
-    for(var x = 0; x < this.diceCount; x++){
+    for(var x = 0; x < 6; x++){
       var die: Die = {
         id: x,
-        pips: this.getRoll(),
+        pips: 0,
         keep: false
       }
       dice.push(die);
     }
-    return dice;
+    this.dice = dice;
+    console.log(this.dice);
+    this.rollDice();
+  }
+
+  rollDice(){
+    for(var x = 0; x < this.dice.length; x++){
+      var die = this.dice[x];
+      die.pips = this.getRoll();
+      this.dice[x] = die;
+      console.log(die);
+    }
   }
 
   getRoll(){
@@ -41,13 +48,22 @@ export class DiceComponent implements OnInit {
     console.log("keep die {}, {} pips", die.id, die.pips);
     die.keep = !die.keep;
     if(die.keep){
+      this.dice = this.sortDie(die, this.dice);
       this.keptDice.push(die);
+      console.log(this.keptDice);
     } else {
-      for(var x = 0; x < this.keptDice.length; x++){
-        if(die.id == this.keptDice[x].id){
-          this.keptDice.splice(x, 1);
-        }
+      this.keptDice = this.sortDie(die, this.keptDice);
+      this.dice.push(die);
+      console.log(this.dice);
+    }
+  }
+
+  sortDie(die: Die, diceList){
+    for(var x = 0; x < diceList.length; x++){
+      if(die.id == diceList[x].id){
+        diceList.splice(x, 1);
       }
     }
+    return diceList
   }
 }
