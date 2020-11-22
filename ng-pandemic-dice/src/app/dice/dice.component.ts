@@ -14,6 +14,7 @@ export class DiceComponent implements OnInit {
   score = 0
   rollScore = 0
   roundScore = 0
+  validRoll = true
 
   constructor() { }
 
@@ -43,16 +44,17 @@ export class DiceComponent implements OnInit {
       this.keptDice = [];
     }
 
-    console.log("Kept dice: " + this.keptDice.length);
-    console.log("Dice to roll: " + this.dice.length);
-    console.log("Scored dice: " + this.scoredDice.length);
-
     //gen random ints for remaining dice
     for(var y = 0; y < this.dice.length; y++){
       var die = this.dice[y];
       die.pips = this.getRoll();
       this.dice[y] = die;
       console.log(die);
+    }
+
+    this.validRoll = this.validateRoll(this.dice);
+    if(!this.validRoll){
+      console.log("resetting");
     }
   }
 
@@ -85,40 +87,49 @@ export class DiceComponent implements OnInit {
   }
 
   scoreRoll(diceList){
+    console.log("scoring dice..");
     var rollScore = 0;
-    for(var x = 0; x < diceList.length; x++){
-      console.log("Scoring die..", diceList[x].id, diceList[x].pips);
-      var multiples = this.checkMultiples(diceList[x], diceList);
-      console.log("Multiples", multiples);
-      if(multiples >= 3){
-        var factor = 0;
-        var processing = []
-        processing.push(diceList[x]);
-        for(var y = 0; y < diceList.length; y++){
-          if((diceList[x].id != diceList[y].id) && (diceList[x].pips == diceList[y].pips)){
-            processing.push(diceList[y]);
+    if(this.checkStraight(diceList)){
+      console.log("straight");
+      rollScore = 1500;
+    } 
+    else {
+      console.log("no straight")
+      for(var x = 0; x < diceList.length; x++){
+        console.log("Scoring die..", diceList[x].id, diceList[x].pips);
+        var multiples = this.checkMultiples(diceList[x], diceList);
+        console.log("Multiples", multiples);
+        if(multiples >= 3){
+          var factor = 0;
+          var processing = []
+          processing.push(diceList[x]);
+          for(var y = 0; y < diceList.length; y++){
+            if((diceList[x].id != diceList[y].id) && (diceList[x].pips == diceList[y].pips)){
+              processing.push(diceList[y]);
+            }
           }
-        }
-        if(diceList[x].pips == 1){
-          factor = 1000;
-        } else {
-          factor = diceList[x].pips * 100;
-        }
-        rollScore = factor;
+          if(diceList[x].pips == 1){
+            factor = 1000;
+          } else {
+            factor = diceList[x].pips * 100;
+          }
+          rollScore = factor;
 
-        if (processing.length > 3) {
-          for(var z = 0; z < (processing.length - 3); z++){
-            rollScore += factor;
+          if (processing.length > 3) {
+            for(var z = 0; z < (processing.length - 3); z++){
+              rollScore += factor;
+            }
           }
         }
+        if(diceList[x].pips == 1 && multiples < 3){
+          rollScore += 100;
+        } else if(diceList[x].pips == 5 && multiples < 3){
+          rollScore += 50;
+        }
       }
-      if(diceList[x].pips == 1 && multiples < 3){
-        rollScore += 100;
-      } else if(diceList[x].pips == 5 && multiples < 3){
-        rollScore += 50;
-      }
+      console.log("roll score: " + rollScore);
+      this.rollScore = rollScore;
     }
-    this.rollScore = rollScore;
   }
 
   checkMultiples(die: Die, diceList){
@@ -135,11 +146,33 @@ export class DiceComponent implements OnInit {
   checkStraight(allPips){
     var straight = [1,2,3,4,5,6];
     allPips = allPips.sort(function(x,y){return x-y});
+    console.log(allPips);
     for(var z=0; z < straight.length; z++){
       if(straight[z] != allPips[z]){
         return false;
       }
     }
     return true;
+  }
+
+  validateRoll(diceList){
+    for(var x = 0; x < diceList.length; x++){
+      if((this.checkMultiples(diceList[x], diceList) >= 3) || (diceList[x].pips == 1 || diceList[x].pips == 5)){
+        console.log("good roll");
+        return true;
+      }
+    }
+    console.log("bad roll");
+    return false;
+  }
+
+  reset(){
+    this.dice = [];
+    this.keptDice = [];
+    this.scoredDice = [];
+    this.score = 0;
+    this.rollScore = 0;
+    this.roundScore = 0;
+    this.validRoll = true;
   }
 }
